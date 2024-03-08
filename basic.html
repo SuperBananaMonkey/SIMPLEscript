@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Playground</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+  }
+
+  header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  textarea {
+    width: 100%;
+    height: 200px;
+    font-size: 14px;
+    padding: 10px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+
+  button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 10px;
+  }
+
+  button:hover {
+    background-color: #555;
+  }
+
+  #output {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    min-height: 200px;
+    overflow-y: auto;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>SIMPLE Programming Language Playground</h1>
+</header>
+<div class="container">
+  <p>Type or paste your SIMPLE code below and click "Run" to see the output:</p>
+  <textarea id="customCode" placeholder="Enter your SIMPLE code here"></textarea>
+  <button onclick="runCustomCode()">Run</button>
+  <div id="output" contenteditable="true"></div>
+  <button onclick="downloadTips()">Tips</button>
+</div>
+
+<script>
+function runCustomCode() {
+  var code = document.getElementById("customCode").value;
+  document.getElementById("output").innerHTML = "<pre>" + runCustomLanguage(code) + "</pre>";
+}
+
+function runCustomLanguage(code) {
+  var output = "";
+  var lines = code.split("\n");
+
+  lines.forEach(function(line) {
+    if (line.startsWith("Print = ")) {
+      var text = line.substring(8);
+      output += text + "\n";
+    } else if (line.startsWith("PrintEquation = ")) {
+      var equation = line.substring(15);
+      try {
+        output += equation + " = " + eval(equation) + "\n";
+      } catch (error) {
+        output += "?Syntax Error\n";
+      }
+    } else if (line.startsWith("MultipleChoice = ")) {
+      var parts = line.substring(16).split("/");
+      var choices = parts[0].split(";");
+      var correctAnswer = parseInt(parts[1]);
+      for (var i = 0; i < choices.length; i++) {
+        output += i + ". " + choices[i] + "\n";
+      }
+      var userAnswer = prompt("Enter the number of your answer:");
+      if (userAnswer === null) {
+        output += "Question skipped\n";
+      } else if (userAnswer.trim() === "*" + correctAnswer) {
+        output += "Correct!\n";
+      } else {
+        output += "Incorrect!\n";
+      }
+    } else {
+      output += "?Syntax Error\n";
+    }
+  });
+
+  return output.trim();
+}
+
+function downloadTips() {
+  var tips = "Tip 1: Use semicolons to separate commands;\nTip 2: Ensure proper syntax for mathematical equations.\n"; // Define the tips and tricks for the language
+  
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(tips));
+  element.setAttribute('download', 'language_tips.txt');
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+</script>
+</body>
+</html>
